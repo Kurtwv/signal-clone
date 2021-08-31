@@ -7,19 +7,21 @@ import LoginScreen from './screens/LoginScreen';
 
 import {createStackNavigator} from "@react-navigation/stack";
 import RegisterScreen from './screens/RegisterScreen';
+import HomeScreen from './screens/HomeScreen';
 const Stack = createStackNavigator();
 const globalScreenOptions ={
   headerStyle: {backgroundColor: 'lightblue'},
   headerTitle: {color: "white"},
   headerTintColor: "white"
 };
-
+//initialRouteName="Home"
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={globalScreenOptions}>
+      <Stack.Navigator initialRouteName="Home" screenOptions={globalScreenOptions}>
       <Stack.Screen options={{title: "Login"} } name='Login' component={LoginScreen}/>
       <Stack.Screen name='Register' component={RegisterScreen}/>
+      <Stack.Screen name='Home' component={HomeScreen}/>
       </Stack.Navigator>
 
     </NavigationContainer>

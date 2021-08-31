@@ -1,21 +1,45 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
+import { useEffect } from 'react'
 import { useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native'
 import { Button, Image, Input } from 'react-native-elements'
+import { auth } from '../firebase'
 // import { KeyboardAvoidingView} from 'react-native'
-const LoginScreen = (props) => {
+const LoginScreen = ({navigation}) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const signIn = () => {
 
-    }
+    //unsubscripe for performance
+
+    useEffect(() => {
+        const unsubscripe = auth.onAuthStateChanged((authUser) =>{
+            console.log(authUser);
+            if(authUser) {
+                navigation.replace("Home");
+            }
+        })
+        return () => {
+            unsubscripe()
+        }
+    }, []);
+
+   
+
+    const signIn = () => {
+        auth.signInWithEmailAndPassword(email, password)
+        .catch(error => alert(error));
+
+        }
+            
+    
     // const functionfd = {
     //     text.setPassword()
     // }
     return (
+        // <div>
         <KeyboardAvoidingView behavior="padding" style={styles.container}>
             <StatusBar style="light"/>
             <Image 
@@ -38,15 +62,17 @@ const LoginScreen = (props) => {
                 type="Password" 
                 value={password}
                 onChangeText={(text) => setPassword(text)}
+                onSubmitEditing={signIn}
                 />
                 {/* <Text>{email} {password}</Text> */}
             </View>
                 <Button containerStyle={styles.button} onPress={signIn}title="Login"/>
-                <Button onPress={() => props.navigation.navigate("Register")} containerStyle={styles.button} type="outline" title="Register"/>
+                <Button onPress={() => navigation.navigate("Register")} containerStyle={styles.button} type="outline" title="Register"/>
                 
                 <View style={{height: 100}}/>
                
         </KeyboardAvoidingView>
+    //    </div>
     )
 }
 

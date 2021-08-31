@@ -1,25 +1,35 @@
-import { StatusBar } from 'expo-status-bar'
-import React, { useLayoutEffect } from 'react'
-import { useState } from 'react'
-import { StyleSheet, KeyboardAvoidingView, View } from 'react-native'
-import { Button, Input, Text } from 'react-native-elements'
+import { StatusBar } from 'expo-status-bar';
+import React, { useLayoutEffect } from 'react';
+import { useState } from 'react';
+import { StyleSheet, KeyboardAvoidingView, View } from 'react-native';
+import { Button, Input, Text } from 'react-native-elements';
+import {auth} from "../firebase";
 
 
-const RegisterScreen = (props) => {
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [imageUrl, setImageUrl] = useState("")
+const RegisterScreen = ({navigation}) => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
 
     const register = () => {
         
+        auth.createUserWithEmailAndPassword(email, password)
+        .then(authUser => {
+
+            //Gives back 4 objects, one of them is the user.
+            authUser.user.updateProfile({
+            displayName: name,
+            photoURL: imageUrl || "https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png",
+            });
+        }).catch(error => alert(error.message))
     }
 
     useLayoutEffect(() => {
-        props.navigation.setOptions({
+        navigation.setOptions({
             headerBackTitle: "Login",
-        })
-    }, [props.navigation])
+        });
+    }, [navigation]);
     
     return (
         <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -58,7 +68,9 @@ const RegisterScreen = (props) => {
 
             <Button 
             containerStyle={styles.button}
-            raised onPress={register} title="Register"></Button>
+            raised 
+            onPress={register} 
+            title="Register"></Button>
         </KeyboardAvoidingView>
     )
 }
